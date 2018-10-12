@@ -19,21 +19,14 @@ def enter_button_clk(table, users_list_box, stations_list_box, persons_list_box,
     person = person_list_box.currentText()
     schedule = schedule_list_box.currentText()
     station_id = station_list.index(station) + 1 # Индекс станции
-    person_id = person_index(person)
+    person_id = person_list.index(person)
     schedule_id = schedule_list.index(schedule) * 2 + 1 # Индекс ячейки графика + в качестве n лица
     table.setItem(schedule_id + person_id, station_id, QTableWidgetItem(user))
-
-def person_index(person):
-    if person == 'Первого':
-        person_id = 0
-    elif person == 'Второго':
-        person_id = 1
-    return person_id
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
 
-    sql_users = '''SELECT * FROM users'''
+    sql_users = '''SELECT * FROM users ORDER BY login'''
     sql_stations = '''SELECT * FROM stations'''
     sql_persons = '''SELECT * FROM persons'''
     sql_schedule = '''SELECT * FROM schedules'''
@@ -84,8 +77,10 @@ if __name__ == '__main__':
     # Звполнение строк в качестве лица из базы данных
     if person_list_box.currentIndexChanged != -1:
         data = read_users_data(sql_persons)
+        person_list = []
         for person_data in data:
-            person_list_box.addItem(person_data[1])
+            person_list.append(person_data[1])
+        person_list_box.addItems(person_list)
 
     # Внесение в таблицу наименований столбцов и строк
     for col in range(1, 9, 2): # Столбцы - наименования станций
